@@ -34,8 +34,11 @@ def _chunks(l, n):
         yield l[i:i + n]
 
 
-def _gcm_send(data, content_type):
-    key = SETTINGS.get("GCM_API_KEY")
+def _gcm_send(data, content_type, **kwargs):
+    if kwargs.get('gcm_api_key'):
+        key = kwargs['gcm_api_key']
+    else:
+        key = SETTINGS.get("GCM_API_KEY")
     if not key:
         raise ImproperlyConfigured(
             'You need to set PUSH_NOTIFICATIONS_SETTINGS["GCM_API_KEY"] to send messages through GCM.')
@@ -72,7 +75,7 @@ def _gcm_send_plain(registration_id, data, **kwargs):
 
     data = urlencode(sorted(values.items())).encode("utf-8")  # sorted items for tests
 
-    result = _gcm_send(data, "application/x-www-form-urlencoded;charset=UTF-8")
+    result = _gcm_send(data, "application/x-www-form-urlencoded;charset=UTF-8", **kwargs)
 
     if result.startswith("Error="):
         if result in ("Error=NotRegistered", "Error=InvalidRegistration"):
@@ -104,7 +107,7 @@ def _gcm_send_json(registration_ids, data, **kwargs):
 
     data = json.dumps(values, separators=(",", ":"), sort_keys=True).encode("utf-8")  # keys sorted for tests
 
-    result = json.loads(_gcm_send(data, "application/json"))
+    result = json.loads(_gcm_send(data, "application/json", **kwargs))
     if result["failure"]:
         ids_to_remove = []
         throw_error = 0
