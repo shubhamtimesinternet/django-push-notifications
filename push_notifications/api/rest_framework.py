@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from rest_framework import permissions
 from rest_framework.serializers import ModelSerializer, ValidationError
