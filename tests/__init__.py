@@ -11,4 +11,4 @@ try:
 except ImportError:
 	pass
 else:
-	from test_rest_framework import *
+	from .test_rest_framework import *

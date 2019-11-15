@@ -14,8 +14,8 @@ try:
 	from urllib.parse import urlencode
 except ImportError:
 	# Python 2 support
-	from urllib2 import Request, urlopen
-	from urllib import urlencode
+	from urllib.request import Request, urlopen
+	from urllib.parse import urlencode
 
 from django.core.exceptions import ImproperlyConfigured
 from . import NotificationError
@@ -61,10 +61,10 @@ def _gcm_send_plain(registration_id, data, **kwargs):
 
 	values = {"registration_id": registration_id} if registration_id else {}
 
-	for k, v in data.items():
+	for k, v in list(data.items()):
 		values["data.%s" % (k)] = v.encode("utf-8")
 
-	for k, v in kwargs.items():
+	for k, v in list(kwargs.items()):
 		if v:
 			if isinstance(v, bool):
 				# Encode bools into ints
@@ -112,7 +112,7 @@ def _gcm_send_json(registration_ids, data, **kwargs):
 	if data is not None:
 		values["data"] = data
 
-	for k, v in kwargs.items():
+	for k, v in list(kwargs.items()):
 		if v:
 			values[k] = v
 

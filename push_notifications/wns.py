@@ -14,7 +14,8 @@ try:
 	from urllib.request import Request, urlopen
 except ImportError:
 	# Python 2 support
-	from urllib2 import HTTPError, Request, urlopen
+	from urllib.error import HTTPError
+	from urllib.request import Request, urlopen
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -299,7 +300,7 @@ def dict_to_xml_schema(data):
 		}
 	:return: ElementTree.Element
 	"""
-	for key, value in data.items():
+	for key, value in list(data.items()):
 		root = _add_element_attrs(ET.Element(key), value.get("attrs", {}))
 		children = value.get("children", None)
 		if isinstance(children, dict):
@@ -322,7 +323,7 @@ def _add_sub_elements_from_dict(parent, sub_dict):
 			...
 		}}
 	"""
-	for key, value in sub_dict.items():
+	for key, value in list(sub_dict.items()):
 		if isinstance(value, list):
 			for repeated_element in value:
 				sub_element = ET.SubElement(parent, key)
@@ -351,6 +352,6 @@ def _add_element_attrs(elem, attrs):
 		{"attribute1": "value", "attribute2": "another"}
 	:return: ElementTree.Element
 	"""
-	for attr, value in attrs.items():
+	for attr, value in list(attrs.items()):
 		elem.attrib[attr] = value
 	return elem

@@ -237,7 +237,7 @@ class ModelTestCase(TestCase):
 		with mock.patch("push_notifications.gcm._gcm_send_json", return_value="") as p:
 			reg_ids = [obj.registration_id for obj in GCMDevice.objects.all()]
 			gcm_send_bulk_message(reg_ids, {"message": "Hello World"})
-			p.assert_called_once_with([u"abc", u"abc1"], {"message": "Hello World"})
+			p.assert_called_once_with(["abc", "abc1"], {"message": "Hello World"})
 
 	def test_can_save_wsn_device(self):
 		device = GCMDevice.objects.create(registration_id="a valid registration id")
